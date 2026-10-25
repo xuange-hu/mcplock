@@ -1,6 +1,6 @@
 # mcplock
 
-![tests](https://img.shields.io/badge/tests-183-brightgreen)
+![tests](https://img.shields.io/badge/tests-195-brightgreen)
 ![python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-zero-brightgreen)
 
@@ -188,6 +188,22 @@ the rug-pull vector. Schema key order is irrelevant.
 
 ## CI
 
+As a GitHub Action — no install step, and it writes a job summary:
+
+```yaml
+- uses: xuange-hu/mcplock@v1
+  with:
+    command: npx -y my-mcp-server
+    lockfile: mcplock.json
+    fail-on: breaking
+```
+
+Inputs: `command` (or `url`), `lockfile`, `fail-on`, `update`, `extra-args`.
+Outputs: `drift`, `max-severity`, `fingerprint`, `report`. The first run with
+no lockfile creates the baseline and passes, so adopting it is a one-line diff.
+
+Or as a plain step:
+
 ```yaml
 - name: MCP capability drift
   run: |
@@ -206,7 +222,8 @@ GitHub Code Scanning integration:
 ```
 
 Exit codes: `0` clean (or below threshold), `1` drift at or above
-`--fail-on`, `2` tool error (server unreachable, bad lockfile).
+`--fail-on`, `2` tool error (server unreachable, bad lockfile). A broken runner
+must never be reported as drift — those are different failures.
 
 ## MCP server
 
@@ -237,7 +254,7 @@ coding agent to explain a drift report itself:
 ```bash
 pip install -e .[mcp]
 pip install pytest ruff
-pytest              # 183 tests
+pytest              # 195 tests
 ruff check .
 ```
 

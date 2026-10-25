@@ -1,0 +1,108 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[mcp]" pytest
+
+      - name: Tests
+        run: python -m pytest tests -q
+
+      - name: End-to-end smoke (real stdio server)
+        run: |
+          python -m mcplock snap --out base.json -- python examples/echo_server.py
+          python -m mcplock inspect base.json
+          python -m mcplock risk base.json --fail-on critical || true
+          set +e
+          python -m mcplock verify --lock base.json --fail-on breaking -- \
+            python examples/echo_server.py --mutated
+          code=$?
+          set -e
+          test "$code" -eq 1
+
+      - name: MCP tool registration
+        run: |
+          python - <<'PY'
+          import asyncio, json, sys
+          from mcplock.mcp_server import app
+
+          async def main():
+              tools = await app.list_tools()
+              names = sorted(t.name for t in tools)
+              print("tools:", names)
+              assert len(names) == 4, names
+              return names
+
+          names = asyncio.run(main())
+          assert names == ["mcplock_describe", "mcplock_diff", "mcplock_risk",
+                           "mcplock_schema_template"], names
+          print("OK: 4 MCP tools registered")
+          PY
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install ruff
+      - run: ruff check .
+
+  badge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e . pytest
+      - name: README test-count badge vs pytest
+        run: |
+          set -euo pipefail
+          collected=$(python -m pytest tests --collect-only -q | tail -3 | head -1 | grep -oE '[0-9]+ tests? collected' | grep -oE '^[0-9]+' || true)
+          if [ -z "$collected" ]; then
+            collected=$(python -m pytest tests --collect-only -q | grep -cE '::' || true)
+          fi
+          badge=$(grep -oE 'tests-[0-9]+-brightgreen' README.md | head -1 | grep -oE '[0-9]+')
+          echo "collected=$collected badge=$badge"
+          if [ "$collected" != "$badge" ]; then
+            echo "::warning::README badge says $badge but pytest collects $collected"
+          fi

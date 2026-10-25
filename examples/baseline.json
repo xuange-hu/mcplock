@@ -1,0 +1,148 @@
+{
+  "schema": "mcplock-snapshot",
+  "snapshot_version": 1,
+  "generated_at": "2026-10-25T19:26:39Z",
+  "generator": {
+    "name": "mcplock",
+    "version": "0.1.0"
+  },
+  "target": {
+    "transport": "stdio",
+    "command": [
+      "demo-server"
+    ]
+  },
+  "server": {
+    "name": "demo-server",
+    "version": "1.0.0",
+    "title": null
+  },
+  "protocol_version": "2025-06-18",
+  "capabilities": {
+    "tools": {},
+    "prompts": {},
+    "resources": {}
+  },
+  "surface_digest": "0c734bd2af26192bd4dfbacfb1119f5f21b4fdedbc7158f40e3e9f0f1f92cc55",
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Read the contents of a file from disk.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "absolute path"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "schema_digest": "5cc9fb4549e4e46d",
+      "description_digest": "66c8359ee4b07085"
+    },
+    {
+      "name": "run_command",
+      "description": "Execute a shell command and return stdout.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "integer",
+            "default": 30
+          }
+        },
+        "required": [
+          "command"
+        ]
+      },
+      "schema_digest": "860a5c7e4776663c",
+      "description_digest": "e02b4c4022345cdd"
+    },
+    {
+      "name": "search_web",
+      "description": "Search the web for a query.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 5
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "fast",
+              "deep"
+            ]
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "schema_digest": "ffa2b52273749bd5",
+      "description_digest": "e7e78ab1ef637e38"
+    },
+    {
+      "name": "write_file",
+      "description": "Write text to a file on disk.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ]
+      },
+      "schema_digest": "3f4ea9aef3ff7c58",
+      "description_digest": "ed440b3ccce0b93c"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "code_review",
+      "title": null,
+      "description": "Review a diff for bugs.",
+      "arguments": [
+        {
+          "name": "diff",
+          "description": "unified diff",
+          "required": true
+        },
+        {
+          "name": "strict",
+          "description": "be pedantic",
+          "required": false
+        }
+      ],
+      "digest": "c0aa0ae68d50d86d"
+    }
+  ],
+  "resources": [
+    {
+      "uri": "file:///project/README.md",
+      "name": "readme",
+      "title": null,
+      "description": "Project readme",
+      "mime_type": "text/markdown",
+      "digest": "2268ee804fe92270"
+    }
+  ],
+  "resource_templates": []
+}

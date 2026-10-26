@@ -1,7 +1,7 @@
 # mcplock
 
-![tests](https://img.shields.io/badge/tests-195-brightgreen)
-![python](https://img.shields.io/badge/python-3.9%2B-blue)
+![tests](https://img.shields.io/badge/tests-199%20passing-brightgreen)
+![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-zero-brightgreen)
 
 Capability lockfile and drift detection for [MCP](https://modelcontextprotocol.io) servers.
@@ -57,7 +57,7 @@ $ echo $?
 pip install mcplock       # or: uvx mcplock --help
 ```
 
-Zero required dependencies. Python 3.9+.
+Zero required dependencies for the core. Python 3.10+.
 
 Optional MCP server exposure (4 tools for an LLM to call):
 

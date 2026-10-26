@@ -20,7 +20,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        # The `[mcp]` extra pins mcp>=1.2,<2 which itself requires Python >=3.10,
+        # so the 3.9 leg failed at the install step rather than at a test. The
+        # floor below now says >=3.10 for the same reason - claiming 3.9 support
+        # we never actually exercised was the bug.
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
         with:
@@ -96,13 +100,14 @@ jobs:
       - run: python -m pip install -e . pytest
       - name: README test-count badge vs pytest
         run: |
-          set -euo pipefail
-          collected=$(python -m pytest tests --collect-only -q | tail -3 | head -1 | grep -oE '[0-9]+ tests? collected' | grep -oE '^[0-9]+' || true)
+          # -o addopts= neutralises the project-level addopts="-q": with the -q
+          # below it becomes -qq and pytest -qq hides the "N tests collected"
+          # line, which is why the fallback grep -c '::' hack existed at all.
+          collected=$(python -m pytest --collect-only -q -o addopts= 2>/dev/null | grep -oE '[0-9]+ tests? collected' | grep -oE '^[0-9]+' || true)
+          badge=$(grep -oE 'tests-[0-9]+%20passing' README.md | head -1 | grep -oE '[0-9]+' || true)
+          echo "collected=${collected:-NOTHING} badge=${badge:-NONE}"
           if [ -z "$collected" ]; then
-            collected=$(python -m pytest tests --collect-only -q | grep -cE '::' || true)
-          fi
-          badge=$(grep -oE 'tests-[0-9]+-brightgreen' README.md | head -1 | grep -oE '[0-9]+')
-          echo "collected=$collected badge=$badge"
-          if [ "$collected" != "$badge" ]; then
+            echo "::warning::pytest collected nothing - the badge check did not run"
+          elif [ "$collected" != "$badge" ]; then
             echo "::warning::README badge says $badge but pytest collects $collected"
           fi

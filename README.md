@@ -1,5 +1,7 @@
 # mcplock
 
+[中文说明 / Chinese README](README_CN.md)
+
 ![tests](https://img.shields.io/badge/tests-199%20passing-brightgreen)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-zero-brightgreen)

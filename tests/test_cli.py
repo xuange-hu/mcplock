@@ -310,3 +310,28 @@ def test_renderer_dim_and_bold_helpers():
     assert r.bold("x") == "x" and r.dim("x") == "x" and r.ok("x") == "x"
     r2 = Renderer(color=True)
     assert "\033[1m" in r2.bold("x")
+
+
+# -- fail-on none: report mode, never fail (family-wide contract) ----------
+
+def test_diff_fail_on_none_never_fails(tmp_path):
+    a = write_lock(tmp_path / "a.json", snapshot(tools=[tool("a"), tool("b")]))
+    b = write_lock(tmp_path / "b.json", snapshot(tools=[tool("a")]))
+    # the same breaking change trips --fail-on breaking ...
+    assert run(["diff", a, b, "--fail-on", "breaking", "--quiet"]) == cli.EXIT_DRIFT
+    # ... and is still reported without failing under --fail-on none
+    assert run(["diff", a, b, "--fail-on", "none", "--quiet"]) == cli.EXIT_OK
+
+
+def test_risk_fail_on_none_never_fails(tmp_path):
+    lock = write_lock(
+        tmp_path / "l.json",
+        snapshot(tools=[tool("run_command", "execute a shell command")]),
+    )
+    assert run(["risk", lock, "--fail-on", "high", "--quiet"]) == cli.EXIT_DRIFT
+    assert run(["risk", lock, "--fail-on", "none", "--quiet"]) == cli.EXIT_OK
+
+
+def test_verify_parser_accepts_fail_on_none():
+    args = cli.build_parser().parse_args(["verify", "--fail-on", "none"])
+    assert args.fail_on == "none"

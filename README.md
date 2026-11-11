@@ -2,7 +2,7 @@
 
 [中文说明 / Chinese README](README_CN.md)
 
-![tests](https://img.shields.io/badge/tests-199%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-202%20passing-brightgreen)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-zero-brightgreen)
 
@@ -102,7 +102,7 @@ mcplock verify --lock base.json -- python examples/echo_server.py --mutated
 `diff`, `risk` and `inspect` never launch anything — they are safe to run on
 untrusted lockfiles.
 
-Common flags: `--json`, `--quiet`, `--sarif PATH`, `--fail-on {breaking,risky,new,safe}`,
+Common flags: `--json`, `--quiet`, `--sarif PATH`, `--fail-on {breaking,risky,new,safe,none}`,
 `--no-color` / `--color` (accepted before or after the subcommand).
 
 ## How changes are classified
@@ -256,7 +256,7 @@ coding agent to explain a drift report itself:
 ```bash
 pip install -e .[mcp]
 pip install pytest ruff
-pytest              # 195 tests
+pytest              # 202 tests
 ruff check .
 ```
 

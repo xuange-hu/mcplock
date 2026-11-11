@@ -113,9 +113,9 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("current")
     sp.add_argument(
         "--fail-on",
-        choices=SEVERITIES,
+        choices=(*SEVERITIES, "none"),
         default=None,
-        help="exit 1 if any change is at least this severe",
+        help="exit 1 if any change is at least this severe ('none' never fails)",
     )
     sp.add_argument(
         "--only",
@@ -135,9 +135,9 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--lock", default=DEFAULT_LOCKFILE)
     sp.add_argument(
         "--fail-on",
-        choices=SEVERITIES,
+        choices=(*SEVERITIES, "none"),
         default=BREAKING,
-        help="exit 1 at or above this severity (default breaking)",
+        help="exit 1 at or above this severity (default breaking; 'none' never fails)",
     )
     sp.add_argument("--update", action="store_true", help="rewrite the lockfile")
     sp.add_argument("--sarif", metavar="PATH")
@@ -148,9 +148,9 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("lockfile", nargs="?", default=DEFAULT_LOCKFILE)
     sp.add_argument(
         "--fail-on",
-        choices=RISK_SEVERITIES,
+        choices=(*RISK_SEVERITIES, "none"),
         default=None,
-        help="exit 1 if any finding is at least this severe",
+        help="exit 1 if any finding is at least this severe ('none' never fails)",
     )
     sp.add_argument(
         "--deny-capability",
@@ -331,7 +331,7 @@ def _cmd_diff(args: argparse.Namespace, r: Renderer) -> int:
         if args.only:
             print(f"(filtered to {args.only})")
 
-    if args.fail_on and res.at_least(args.fail_on):
+    if args.fail_on and args.fail_on != "none" and res.at_least(args.fail_on):
         return EXIT_DRIFT
     return EXIT_OK
 
@@ -367,7 +367,7 @@ def _cmd_verify(args: argparse.Namespace, r: Renderer) -> int:
         if args.update:
             print(f"(lockfile updated: {args.lock})")
 
-    if res.at_least(args.fail_on):
+    if args.fail_on and args.fail_on != "none" and res.at_least(args.fail_on):
         return EXIT_DRIFT
     return EXIT_OK
 
@@ -383,7 +383,7 @@ def _cmd_risk(args: argparse.Namespace, r: Renderer) -> int:
         print(r.snapshot_summary(snap))
         print()
         print(r.risk_report(rep))
-    if args.fail_on and _risk_at_least(rep, args.fail_on):
+    if args.fail_on and args.fail_on != "none" and _risk_at_least(rep, args.fail_on):
         return EXIT_DRIFT
     return EXIT_OK
 

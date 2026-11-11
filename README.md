@@ -2,7 +2,7 @@
 
 [中文说明 / Chinese README](README_CN.md)
 
-![tests](https://img.shields.io/badge/tests-202%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-204%20passing-brightgreen)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![deps](https://img.shields.io/badge/dependencies-zero-brightgreen)
 
@@ -256,7 +256,7 @@ coding agent to explain a drift report itself:
 ```bash
 pip install -e .[mcp]
 pip install pytest ruff
-pytest              # 202 tests
+pytest              # 204 tests
 ruff check .
 ```
 

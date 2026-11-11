@@ -8,7 +8,7 @@
 git clone https://github.com/xuange-hu/mcplock
 cd mcplock
 pip install -e ".[mcp]" pytest ruff
-pytest                 # 202 tests
+pytest                 # 204 tests
 ruff check src tests
 ```
 

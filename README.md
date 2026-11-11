@@ -56,7 +56,7 @@ $ echo $?
 ## Install
 
 ```bash
-pip install mcplock       # or: uvx mcplock --help
+pip install mcplock-audit  # or: uvx --from mcplock-audit mcplock --help
 ```
 
 Zero required dependencies for the core. Python 3.10+.
@@ -64,7 +64,7 @@ Zero required dependencies for the core. Python 3.10+.
 Optional MCP server exposure (4 tools for an LLM to call):
 
 ```bash
-pip install "mcplock[mcp]"
+pip install "mcplock-audit[mcp]"
 mcplock-mcp
 ```
 
@@ -209,7 +209,7 @@ Or as a plain step:
 ```yaml
 - name: MCP capability drift
   run: |
-    pip install mcplock
+    pip install mcplock-audit
     mcplock verify --lock mcplock.json --fail-on breaking \
       -- npx -y my-mcp-server
 ```

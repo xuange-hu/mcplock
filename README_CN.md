@@ -54,7 +54,7 @@ mcplock verify --lock mcplock.json -- npx -y @modelcontextprotocol/server-everyt
 | **stdio 与 HTTP/SSE** | 自写 MCP 客户端，`snap --` 跟命令、`--url` 跟远端 |
 | **离线风险扫描** | 只看锁文件就能发现危险能力，不必连服务器 |
 | **GitHub Action** | `uses: xuange-hu/mcplock@v1`，首跑自动建基线，带 job summary 与 outputs |
-| **MCP 4 工具** | `uvx --from "mcplock[mcp]" mcplock-mcp` |
+| **MCP 4 工具** | `uvx --from "mcplock-audit[mcp]" mcplock-mcp` |
 
 ## 命令
 

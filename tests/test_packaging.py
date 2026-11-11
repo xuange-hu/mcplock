@@ -129,7 +129,7 @@ def test_mcp_extra_pins_below_v2():
 def test_readme_exists_and_has_quickstart():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "mcplock snap" in readme
-    assert "pip install mcplock" in readme or "uvx mcplock" in readme
+    assert "pip install mcplock-audit" in readme or "uvx --from mcplock-audit" in readme
 
 
 def test_examples_are_parseable_lockfiles():
